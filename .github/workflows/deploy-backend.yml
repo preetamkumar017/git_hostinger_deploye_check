@@ -1,0 +1,31 @@
+name: Update Backend Deployment Branch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-deployment-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract backend into deployment branch
+        run: |
+          git subtree split --prefix=backend -b backend-split
+          git push origin backend-split:hostinger-deploy --force
